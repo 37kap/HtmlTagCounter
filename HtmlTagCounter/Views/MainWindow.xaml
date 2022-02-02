@@ -1,0 +1,58 @@
+﻿<Window x:Class="HtmlTagCounter.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:behaviors="clr-namespace:HtmlTagCounter.Behaviors"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        mc:Ignorable="d"
+        Title="Tag counter" Height="450" MinWidth="400">
+    <Window.Resources>
+        <Style TargetType="Button" BasedOn="{StaticResource defaultButtonStyle}"/>
+        <Style TargetType="TextBox" BasedOn="{StaticResource defaultTextBoxStyle}"/>
+        <Style TargetType="DataGridCell" BasedOn="{StaticResource defaultDataGridCellStyle}"/>
+
+        <SolidColorBrush x:Key="WrongUrlBackground" Color="#FFEAEA"/>
+        <SolidColorBrush x:Key="MaxTagsCountBackground" Color="Green"/>
+    </Window.Resources>
+    <DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="200"/>
+                <ColumnDefinition Width="*" MaxWidth="240"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="Original file:" Margin="5">
+                <DockPanel Margin="5">
+                    <Button Content="Browse..." Command="{Binding SelectUrlSourceCommand}" Margin="5 0 0 0" DockPanel.Dock="Right" MinWidth="100"/>
+                    <TextBox Text="{Binding FilePath}" IsReadOnly="True"/>
+                </DockPanel>
+            </GroupBox>
+            <GroupBox Grid.Column="1" Header="Searched tag:" Margin="5">
+                <DockPanel Margin="5">
+                    <Button Content="Start analysis" Command="{Binding StartAnalysisCommand}" Margin="5 0 0 0" DockPanel.Dock="Right" MinWidth="100" IsDefault="True"/>
+                    <TextBox Text="{Binding SearchedTag}"/>
+                </DockPanel>
+            </GroupBox>
+        </Grid>
+        <Label Content="{Binding State}" DockPanel.Dock="Bottom" FontSize="14" />
+        <DataGrid Margin="5 5 5 0" ItemsSource="{Binding TagInfos}" Style="{StaticResource UrlsDataGridStyle}">
+            <i:Interaction.Behaviors>
+                <behaviors:HighlightMaxCountRowBehavior></behaviors:HighlightMaxCountRowBehavior>
+            </i:Interaction.Behaviors>
+            <DataGrid.Resources>
+                <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding UrlIsValid}" Value="False">
+                            <Setter Property="Background" Value="{StaticResource WrongUrlBackground}" />
+                            <Setter Property="ToolTip" Value="{Binding Comment}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Url}" Header="Url" IsReadOnly="True" Width="*" CanUserSort="False"/>
+                <DataGridTextColumn Binding="{Binding Count}" Header="Tag count" IsReadOnly="True" Width="Auto" CanUserSort="False"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</Window>

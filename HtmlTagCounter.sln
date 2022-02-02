@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31402.337
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlTagCounter", "HtmlTagCounter\HtmlTagCounter.csproj", "{2A94527D-A1FA-4455-AAD6-D1A26C6F3CFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgressDialog", "ProgressDialog\ProgressDialog.csproj", "{F203202E-048D-44E9-8D7F-8A44015BC4E5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2A94527D-A1FA-4455-AAD6-D1A26C6F3CFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A94527D-A1FA-4455-AAD6-D1A26C6F3CFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A94527D-A1FA-4455-AAD6-D1A26C6F3CFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A94527D-A1FA-4455-AAD6-D1A26C6F3CFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F203202E-048D-44E9-8D7F-8A44015BC4E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F203202E-048D-44E9-8D7F-8A44015BC4E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F203202E-048D-44E9-8D7F-8A44015BC4E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F203202E-048D-44E9-8D7F-8A44015BC4E5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0DB5AF5F-3D2D-4BBE-84F9-5BF99EAC96D7}
+	EndGlobalSection
+EndGlobal
