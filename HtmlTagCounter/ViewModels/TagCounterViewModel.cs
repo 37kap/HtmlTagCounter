@@ -159,7 +159,7 @@ namespace HtmlTagCounter.ViewModels
             };
         }
 
-        private bool GetUrlAvailability(TagCounterInfo tagInfo, CancellationToken urlCheckCancellationToken)
+        private async Task<bool> GetUrlAvailabilityAsync(TagCounterInfo tagInfo, CancellationToken urlCheckCancellationToken)
         {
             tagInfo.ValidateUrl();
 
@@ -172,7 +172,7 @@ namespace HtmlTagCounter.ViewModels
             {
                 try
                 {
-                    var (urlIsAvailable, checkUrlAvailabilityResult) = PageContentReader.CheckUrlAvailabilityAsync(tagInfo.Url, urlCheckCancellationToken).Result;
+                    var (urlIsAvailable, checkUrlAvailabilityResult) = await PageContentReader.CheckUrlAvailabilityAsync(tagInfo.Url, urlCheckCancellationToken);
                     if (!urlIsAvailable)
                     {
                         tagInfo.UrlIsValid = false;
@@ -211,7 +211,7 @@ namespace HtmlTagCounter.ViewModels
                     TagInfos
                     .AsParallel()
                     .WithCancellation(cts.Token)
-                    .Where(x => GetUrlAvailability(x, AnalysisSCts.Token))
+                    .Where(x => GetUrlAvailabilityAsync(x, AnalysisSCts.Token).Result)
                     .Select(x => (tagInfo: x, content: PageContentReader.ReadContentAsync(x.Url, AnalysisSCts.Token).Result))
                     .Where(x => x.content != null)
                     .ForAll(x =>
