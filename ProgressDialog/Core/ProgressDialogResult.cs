@@ -4,27 +4,27 @@ using System.ComponentModel;
 namespace ProgressDialog.Core
 {
     /// <summary>
-    /// Result of progress dialog
+    /// Result of progress dialog.
     /// </summary>
     public class ProgressDialogResult
     {
         /// <summary>
-        /// The result of the action
+        /// The result of the action.
         /// </summary>
         public object Result { get; internal set; }
 
         /// <summary>
-        /// Action canceled
+        /// Action canceled.
         /// </summary>
         public bool Cancelled { get; private set; }
 
         /// <summary>
-        /// Action execution error
+        /// Action execution error.
         /// </summary>
         public Exception Error { get; internal set; }
 
         /// <summary>
-        /// Sign of an unsuccessful action
+        /// Sign of an unsuccessful action.
         /// </summary>
         public bool OperationFailed
         {
@@ -32,9 +32,9 @@ namespace ProgressDialog.Core
         }
 
         /// <summary>
-        /// Result of progress dialog
+        /// Result of progress dialog.
         /// </summary>
-        /// <param name="e">Event arguments</param>
+        /// <param name="e">Event arguments.</param>
         public ProgressDialogResult(RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled)

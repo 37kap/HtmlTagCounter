@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 namespace HtmlTagCounter.Core
 {
     /// <summary>
-    /// Extensions methods
+    /// Extensions methods.
     /// </summary>
     public static class Extensions
     {
         /// <summary>
-        /// Adds the ability to cancel the Task through a cancellation token
+        /// Adds the ability to cancel the Task through a cancellation token.
         /// </summary>
         public static async Task<T> WithCancellation<T>(this Task<T> task, CancellationToken cancellationToken, Action action, bool useSynchronizationContext = true)
         {

@@ -13,22 +13,23 @@ using System.Linq;
 using System.Windows;
 using ProgressDialog.Commands;
 using ProgressDialog.Views;
+using System.Text.RegularExpressions;
 
 namespace HtmlTagCounter.ViewModels
 {
     /// <summary>
-    /// View model for analysing a list of urls from a file
+    /// View model for analysing a list of urls from a file.
     /// </summary>
     public class TagCounterViewModel : BindableBase
     {
         #region Commands
         /// <summary>
-        /// Analysis start command
+        /// Analysis start command.
         /// </summary>
         public ICommand StartAnalysisCommand => _startAnalysisCommand ?? (_startAnalysisCommand = new RelayCommand(OnStartAnalize, CanExecuteStartAnalize));
 
         /// <summary>
-        /// UrlSource (File) selection command
+        /// UrlSource (File) selection command.
         /// </summary>
         public ICommand SelectUrlSourceCommand => _selectUrlSourceCommand ?? (_selectUrlSourceCommand = new RelayCommand(OnSelectFile));
         #endregion
@@ -41,12 +42,13 @@ namespace HtmlTagCounter.ViewModels
         private string _filePath;
         private string _state;
         private int _maxTagCount;
+        private int _requestTimeout = 10;
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Path to the file
+        /// Path to the file.
         /// </summary>
         public string FilePath
         {
@@ -55,7 +57,7 @@ namespace HtmlTagCounter.ViewModels
         }
 
         /// <summary>
-        /// Maximum number of tags found
+        /// Maximum number of tags found.
         /// </summary>
         public int MaxTagCount
         {
@@ -64,7 +66,7 @@ namespace HtmlTagCounter.ViewModels
         }
 
         /// <summary>
-        /// Last or current operation state
+        /// Last or current operation state.
         /// </summary>
         public string State
         {
@@ -73,37 +75,51 @@ namespace HtmlTagCounter.ViewModels
         }
 
         /// <summary>
-        /// Url source
+        /// Url source.
         /// </summary>
         public IUrlSource UrlSource { get; private set; }
 
         /// <summary>
-        /// The tag to be used when analysing pages
+        /// The tag to be used when analysing pages.
         /// </summary>
         public string SearchedTag
         {
             get => _searchedTag;
             set => SetProperty(ref _searchedTag, value);
         }
+        /// <summary>
+        /// Request timeout in seconds.
+        /// </summary>
+        public int RequestTimeout
+        {
+            get => _requestTimeout;
+            set
+            {
+                if (value > 0 && value < 300)
+                {
+                    SetProperty(ref _requestTimeout, value);
+                }
+            }
+        }
 
         /// <summary>
-        /// Observable collection of tag count information
+        /// Observable collection of tag count information.
         /// </summary>
         public ObservableCollection<TagCounterInfo> TagInfos { get; } = new ObservableCollection<TagCounterInfo>();
 
         /// <summary>
-        /// Instance of analyzer
+        /// Instance of analyzer.
         /// </summary>
         public ITagAnalyzer<TagCounterInfo> Analyzer { get; set; }
 
         /// <summary>
-        /// Instance of page content reader
+        /// Instance of page content reader.
         /// </summary>
         public IHtmlPageReader PageContentReader { get; set; }
         #endregion
 
         /// <summary>
-        /// View model for analysing a list of urls from a file
+        /// View model for analysing a list of urls from a file.
         /// </summary>
         public TagCounterViewModel(IHtmlPageReader pageContentReader, ITagAnalyzer<TagCounterInfo> analyzer)
         {
@@ -120,83 +136,58 @@ namespace HtmlTagCounter.ViewModels
                 FilePath = openFileDialog.FileName;
                 UrlSource = new UrlFileSource(FilePath);
 
-                var urlsFromFile = await UrlSource.GetUrlsAsync();
-                PrepareForAnalysis(urlsFromFile);
+                try
+                {
+                    var urlsFromFile = await UrlSource.GetUrlsAsync();
+                    PrepareForAnalysis(urlsFromFile);
+                    SetOperationStatus(Properties.Resources.FileReadingCompleted);
+                }
+                catch (Exception ex)
+                {
+                    SetOperationStatus(ex.InnerException?.Message ?? ex.Message);
+                }
             }
         }
-        
+
         private void PrepareForAnalysis(IList<string> urls)
         {
             TagInfos.Clear();
 
-            var result = ProgressDialogWindow.Execute(Properties.Resources.CheckUrlsFromFile,
-                new Func<ProgressDialogContext, CancellationTokenSource, object>((context, cts) =>
+            foreach (string url in urls)
+            {
+                TagInfos.Add(new TagCounterInfo() { Url = url });
+            };
+        }
+
+        private bool GetUrlAvailability(TagCounterInfo tagInfo, CancellationToken urlCheckCancellationToken)
+        {
+            tagInfo.ValidateUrl();
+
+            if (!tagInfo.UrlIsValid)
+            {
+                tagInfo.Comment = Properties.Resources.WrongUrl;
+                return false;
+            }
+            else
+            {
+                try
                 {
-                    int index = 1;
-                    int pagesCount = urls.Count;
-
-                    urls
-                    .AsParallel()
-                    .AsOrdered()
-                    .WithCancellation(cts.Token)
-                    .Select(x => new TagCounterInfo() { Url = x })
-                    .ForAll(tagInfo =>
+                    var (urlIsAvailable, checkUrlAvailabilityResult) = PageContentReader.CheckUrlAvailabilityAsync(tagInfo.Url, urlCheckCancellationToken).Result;
+                    if (!urlIsAvailable)
                     {
-                        cts.Token.ThrowIfCancellationRequested();
-                        Application.Current.Dispatcher.Invoke(() => TagInfos.Add(tagInfo));
-
-                        context.Report(0, Properties.Resources.CheckUrlsFromFile);
-
-
-                        if (!tagInfo.UrlIsValid)
-                        {
-                            tagInfo.Comment = Properties.Resources.WrongUrl;
-                        }
-                        else
-                        {
-                            CancellationTokenSource urlCheckCts = new CancellationTokenSource();
-                            var timeOutForOneUrlCheck = 10000;
-                            urlCheckCts.CancelAfter(timeOutForOneUrlCheck);
-
-                            try
-                            {
-                                var (urlIsAvailable, checkUrlAvailabilityResult) = PageContentReader.CheckUrlAvailabilityAsync(tagInfo.Url, urlCheckCts.Token).Result;
-                                if (!urlIsAvailable)
-                                {
-                                    tagInfo.UrlIsValid = false;
-                                    tagInfo.Comment = checkUrlAvailabilityResult;
-                                }
-                            }
-                            catch
-                            {
-                                tagInfo.UrlIsValid = false;
-                                tagInfo.Comment = Properties.Resources.TimeoutExpired;
-                            }
-
-                            var progress = index * 100 / pagesCount;
-                            var message = string.Format(Properties.Resources.CheckUrlXofN, index++, pagesCount);
-                            context.Report(progress, message);
-                        }
-
-                        cts.Token.ThrowIfCancellationRequested();
-                    });
-
-                    return true;
-                }));
-
-            if (result.OperationFailed)
-            {
-                SetOperationStatus(result.Error.InnerException?.Message ?? result.Error.Message);
-                TagInfos.Clear();
-            }
-            if (result.Cancelled)
-            {
-                SetOperationStatus(Properties.Resources.CanceledByUser);
-                TagInfos.Clear();
-            }
-            else if (result?.Result is bool)
-            {
-                SetOperationStatus(Properties.Resources.FileReadingCompleted);
+                        tagInfo.UrlIsValid = false;
+                        tagInfo.Comment = checkUrlAvailabilityResult;
+                    }
+                    return urlIsAvailable;
+                }
+                catch (Exception ex)
+                {
+                    tagInfo.Comment = urlCheckCancellationToken.IsCancellationRequested ?
+                        Properties.Resources.TimeoutExpired :
+                        ex.InnerException?.Message ?? ex.Message;
+                }
+                tagInfo.UrlIsValid = false;
+                return false;
             }
         }
 
@@ -209,23 +200,28 @@ namespace HtmlTagCounter.ViewModels
                 {
                     context.Report(0, Properties.Resources.AnalysisStarted);
 
-                    int index = 1;
-                    int pagesCount = TagInfos.Count(t => t.UrlIsValid);
+                    CancellationTokenSource AnalysisSCts = new CancellationTokenSource();
+                    var timeOutForAnalysis = RequestTimeout * 1000;
+                    AnalysisSCts.CancelAfter(timeOutForAnalysis);
+                    context.CancelledByUser += () => AnalysisSCts.Cancel();
 
-                    CancellationTokenSource readPageCts = new CancellationTokenSource();
-                    var timeOutForOneUrlCheck = 10000;
-                    readPageCts.CancelAfter(timeOutForOneUrlCheck);
+                    int index = 1;
+                    int pagesCount = 0;
 
                     TagInfos
                     .AsParallel()
                     .WithCancellation(cts.Token)
-                    .Where(x => x.UrlIsValid)
-                    .Select(x => (tagInfo: x, content: PageContentReader.ReadContentAsync(x.Url, readPageCts.Token).Result))
+                    .Where(x => GetUrlAvailability(x, AnalysisSCts.Token))
+                    .Select(x => (tagInfo: x, content: PageContentReader.ReadContentAsync(x.Url, AnalysisSCts.Token).Result))
                     .Where(x => x.content != null)
                     .ForAll(x =>
                     {
-                        cts.Token.ThrowIfCancellationRequested();
+                        if (pagesCount == 0)
+                        {
+                            pagesCount = TagInfos.Count(ti => ti.UrlIsValid);
+                        }
 
+                        cts.Token.ThrowIfCancellationRequested();
                         var tagInfo = x.tagInfo;
                         tagInfo.Tag = SearchedTag;
 
@@ -259,6 +255,10 @@ namespace HtmlTagCounter.ViewModels
             }
             if (result.Cancelled)
             {
+                foreach (TagCounterInfo tagInfo in TagInfos)
+                {
+                    tagInfo.ClearAnalysisInfo();
+                }
                 SetOperationStatus(Properties.Resources.CanceledByUser);
             }
             else if ((bool)result.Result)
@@ -268,10 +268,7 @@ namespace HtmlTagCounter.ViewModels
             }
         }
 
-        private bool CanExecuteStartAnalize(object parameter)
-        {
-            return TagInfos.Where(t => t.UrlIsValid).Count() > 0;
-        }
+        private bool CanExecuteStartAnalize(object parameter) => TagInfos.Count() > 0;
 
         private void SetOperationStatus(string state)
         {

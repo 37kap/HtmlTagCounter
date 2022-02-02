@@ -35,12 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AsyncAwaitBestPractices, Version=6.0.4.0, Culture=neutral, PublicKeyToken=532360cfd341384d, processorArchitecture=MSIL">
-      <HintPath>..\packages\AsyncAwaitBestPractices.6.0.4\lib\netstandard2.0\AsyncAwaitBestPractices.dll</HintPath>
-    </Reference>
-    <Reference Include="AsyncAwaitBestPractices.MVVM, Version=6.0.4.0, Culture=neutral, PublicKeyToken=fd3d463fd20deb6c, processorArchitecture=MSIL">
-      <HintPath>..\packages\AsyncAwaitBestPractices.MVVM.6.0.4\lib\netstandard2.0\AsyncAwaitBestPractices.MVVM.dll</HintPath>
-    </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.11.40.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.11.40\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>

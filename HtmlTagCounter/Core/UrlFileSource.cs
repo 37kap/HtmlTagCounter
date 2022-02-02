@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 namespace HtmlTagCounter.Core
 {
     /// <summary>
-    /// Specifies the file in which urls are stored
+    /// Specifies the file in which urls are stored.
     /// </summary>
     public class UrlFileSource : IUrlSource
     {
         private List<string> cachedLines;
 
         /// <summary>
-        /// Path to the source file
+        /// Path to the source file.
         /// </summary>
         public string FilePath { get; private set; }
 
         /// <summary>
-        /// Specifies the file in which urls are stored
+        /// Specifies the file in which urls are stored.
         /// </summary>
         public UrlFileSource(string filePath)
         {
@@ -27,9 +27,9 @@ namespace HtmlTagCounter.Core
         }
 
         /// <summary>
-        /// Gets list of urls from source file
+        /// Gets list of urls from source file.
         /// </summary>
-        /// <returns>List of urls</returns>
+        /// <returns>List of urls.</returns>
         public async Task<IList<string>> GetUrlsAsync()
         {
             if (!File.Exists(FilePath))

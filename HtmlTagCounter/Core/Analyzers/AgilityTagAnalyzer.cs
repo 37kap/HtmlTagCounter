@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 namespace HtmlTagCounter.Core.Analyzers
 {
     /// <summary>
-    /// Analyzes tags using Agility
+    /// Analyzes tags using Agility.
     /// </summary>
     public class AgilityTagAnalyzer : ITagAnalyzer<TagCounterInfo>
     {
@@ -17,11 +17,11 @@ namespace HtmlTagCounter.Core.Analyzers
         public AgilityTagAnalyzer() { }
 
         /// <summary>
-        /// Analyzes the content of the page for the presence of tag
+        /// Analyzes the content of the page for the presence of tag.
         /// </summary>
-        /// <param name="pageContent">Html page content</param>
-        /// <param name="tagInfo">Tag information</param>
-        /// <returns>Complete information about the tag written to the source object</returns>
+        /// <param name="pageContent">Html page content.</param>
+        /// <param name="tagInfo">Tag information.</param>
+        /// <returns>Complete information about the tag written to the source object.</returns>
         public TagCounterInfo Analysis(string pageContent, TagCounterInfo tagInfo)
         {
             string tag = tagInfo.Tag;

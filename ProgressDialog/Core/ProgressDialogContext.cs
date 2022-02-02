@@ -4,25 +4,25 @@ using System.ComponentModel;
 namespace ProgressDialog.Core
 {
     /// <summary>
-    /// Progress dialog context
+    /// Progress dialog context.
     /// </summary>
     public class ProgressDialogContext
     {
         /// <summary>
-        /// BackgroundWorker
+        /// BackgroundWorker.
         /// </summary>
         public BackgroundWorker Worker { get; private set; }
 
         /// <summary>
-        /// DoWork event arguments
+        /// DoWork event arguments.
         /// </summary>
         public DoWorkEventArgs Arguments { get; private set; }
 
         /// <summary>
-        /// Progress dialog context
+        /// Progress dialog context.
         /// </summary>
-        /// <param name="worker">BackgroundWorker</param>
-        /// <param name="arguments">DoWork event arguments</param>
+        /// <param name="worker">BackgroundWorker.</param>
+        /// <param name="arguments">DoWork event arguments.</param>
         public ProgressDialogContext(BackgroundWorker worker, DoWorkEventArgs arguments)
         {
             if (worker == null)
@@ -35,12 +35,12 @@ namespace ProgressDialog.Core
         }
 
         /// <summary>
-        /// Cancel button click event
+        /// Cancel button click event.
         /// </summary>
         public event Action CancelledByUser;
 
         /// <summary>
-        /// On user cancelled
+        /// On user cancelled.
         /// </summary>
         internal void OnUserCancelled()
         {
@@ -48,9 +48,8 @@ namespace ProgressDialog.Core
         }
 
         /// <summary>
-        /// Check cancellation pending
+        /// Check cancellation pending.
         /// </summary>
-        /// <returns></returns>
         public bool CheckCancellationPending()
         {
             if (Worker.WorkerSupportsCancellation && Worker.CancellationPending)
@@ -59,7 +58,7 @@ namespace ProgressDialog.Core
             return Arguments.Cancel;
         }
         /// <summary>
-        /// Throw if cancellation pending
+        /// Throw if cancellation pending.
         /// </summary>
         public void ThrowIfCancellationPending()
         {
@@ -69,7 +68,7 @@ namespace ProgressDialog.Core
 
         private string lastMessage;
         /// <summary>
-        /// Last status message
+        /// Last status message.
         /// </summary>
         public string LastMessage
         {
@@ -78,10 +77,10 @@ namespace ProgressDialog.Core
         }
 
         /// <summary>
-        /// Notify progress dialog of current process status
+        /// Notify progress dialog of current process status.
         /// </summary>
-        /// <param name="percentProgress">Per cent of progress</param>
-        /// <param name="message">Message for user</param>
+        /// <param name="percentProgress">Per cent of progress.</param>
+        /// <param name="message">Message for user.</param>
         public void Report(int percentProgress, string message)
         {
             if (Worker.WorkerReportsProgress)

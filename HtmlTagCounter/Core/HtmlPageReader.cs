@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 namespace HtmlTagCounter.Core
 {
     /// <summary>
-    /// Responsible for interacting with html pages
+    /// Responsible for interacting with html pages.
     /// </summary>
     public class HtmlPageReader : IHtmlPageReader
     {
         /// <summary>
-        /// Reads content from html page
+        /// Reads content from html page.
         /// </summary>
-        /// <param name="url">Page url</param>
-        /// <param name="ct">Cancellation token</param>
-        /// <returns>Page content</returns>
+        /// <param name="url">Page url.</param>
+        /// <param name="ct">Cancellation token.</param>
+        /// <returns>Page content.</returns>
         public async Task<string> ReadContentAsync(string url, CancellationToken ct)
         {
             using (HttpClient client = new HttpClient())
@@ -40,11 +40,11 @@ namespace HtmlTagCounter.Core
         }
 
         /// <summary>
-        /// Checks if the url is available
+        /// Checks if the url is available.
         /// </summary>
-        /// <param name="url">Page url</param>
-        /// <param name="ct">Cancellation token</param>
-        /// <returns>A pair of values: is it available, if not, then the reason</returns>
+        /// <param name="url">Page url.</param>
+        /// <param name="ct">Cancellation token.</param>
+        /// <returns>A pair of values: is it available, if not, then the reason.</returns>
         public async Task<(bool, string)> CheckUrlAvailabilityAsync(string url, CancellationToken ct)
         {
             WebRequest webRequest = WebRequest.Create(url);

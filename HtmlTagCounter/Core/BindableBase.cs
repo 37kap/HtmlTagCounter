@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using AsyncAwaitBestPractices;
 
 namespace HtmlTagCounter.Core
 {
@@ -10,21 +9,15 @@ namespace HtmlTagCounter.Core
     /// </summary>
     public abstract class BindableBase : INotifyPropertyChanged
     {
-        readonly WeakEventManager _propertyChangedEventManager = new WeakEventManager();
-
-        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
-        {
-            add => _propertyChangedEventManager.AddEventHandler(value);
-            remove => _propertyChangedEventManager.RemoveEventHandler(value);
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Sets property new value and notifies about it.
         /// /// </summary>
-        /// <param name="backingStore">Reference to source</param>
-        /// <param name="value">New value</param>
-        /// <param name="onChanged">On changed action</param>
-        /// <param name="propertyname">Changed property name</param>
+        /// <param name="backingStore">Reference to source.</param>
+        /// <param name="value">New value.</param>
+        /// <param name="onChanged">On changed action.</param>
+        /// <param name="propertyname">Changed property name.</param>
         protected void SetProperty<T>(ref T backingStore, in T value, in System.Action onChanged = null, [CallerMemberName] in string propertyname = "")
         {
             if (EqualityComparer<T>.Default.Equals(backingStore, value))
@@ -37,9 +30,9 @@ namespace HtmlTagCounter.Core
             OnPropertyChanged(propertyname);
         }
 
-        private void OnPropertyChanged([CallerMemberName] in string propertyName = "")
+        public void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            _propertyChangedEventManager.RaiseEvent(this, new PropertyChangedEventArgs(propertyName), nameof(INotifyPropertyChanged.PropertyChanged));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

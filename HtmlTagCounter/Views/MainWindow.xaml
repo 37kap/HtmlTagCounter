@@ -6,7 +6,7 @@
         xmlns:behaviors="clr-namespace:HtmlTagCounter.Behaviors"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"
-        Title="Tag counter" Height="450" MinWidth="400">
+        Title="Tag counter" Height="450" MinWidth="560">
     <Window.Resources>
         <Style TargetType="Button" BasedOn="{StaticResource defaultButtonStyle}"/>
         <Style TargetType="TextBox" BasedOn="{StaticResource defaultTextBoxStyle}"/>
@@ -20,6 +20,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="200"/>
                 <ColumnDefinition Width="*" MaxWidth="240"/>
+                <ColumnDefinition Width="*" MaxWidth="120"/>
             </Grid.ColumnDefinitions>
             <GroupBox Header="Original file:" Margin="5">
                 <DockPanel Margin="5">
@@ -32,6 +33,9 @@
                     <Button Content="Start analysis" Command="{Binding StartAnalysisCommand}" Margin="5 0 0 0" DockPanel.Dock="Right" MinWidth="100" IsDefault="True"/>
                     <TextBox Text="{Binding SearchedTag}"/>
                 </DockPanel>
+            </GroupBox>
+            <GroupBox Grid.Column="2" Header="Timeout (sec.):" Margin="5">
+                <TextBox Text="{Binding RequestTimeout, UpdateSourceTrigger=PropertyChanged}" Margin="5" Validation.ErrorTemplate="{StaticResource validationTemplate}"/>
             </GroupBox>
         </Grid>
         <Label Content="{Binding State}" DockPanel.Dock="Bottom" FontSize="14" />

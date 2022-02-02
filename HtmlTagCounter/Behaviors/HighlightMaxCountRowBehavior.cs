@@ -11,12 +11,12 @@ using System.Windows.Media;
 namespace HtmlTagCounter.Behaviors
 {
     /// <summary>
-    /// DataGrid behavior for gighlighting row contains max count tags in column Count
+    /// DataGrid behavior for highlighting row contains max count tags in column Count.
     /// </summary>
     public class HighlightMaxCountRowBehavior : Behavior<DataGrid>
     {
         /// <summary>
-        /// DataGrid ViewModel getting from DataContext
+        /// DataGrid ViewModel getting from DataContext.
         /// </summary>
         public TagCounterViewModel ViewModel
         {
@@ -27,12 +27,12 @@ namespace HtmlTagCounter.Behaviors
         }
 
         /// <summary>
-        /// DataGrid behavior for gighlighting row contains max count tags in column Count
+        /// DataGrid behavior for highlighting row contains max count tags in column Count.
         /// </summary>
         public HighlightMaxCountRowBehavior() { }
 
         /// <summary>
-        /// Called after the behavior is attached to an AssociatedObject
+        /// Called after the behavior is attached to an AssociatedObject.
         /// </summary>
         protected override void OnAttached()
         {
@@ -69,10 +69,10 @@ namespace HtmlTagCounter.Behaviors
         {
             if (ViewModel != null)
             {
-                var maxTagCount = ViewModel.TagInfos.Max(ti => ti.Count);
-                foreach (var item in ViewModel.TagInfos)
+                int maxTagCount = ViewModel.TagInfos.Max(ti => ti.Count);
+                foreach (TagCounterInfo item in ViewModel.TagInfos)
                 {
-                    var row = (DataGridRow)AssociatedObject.ItemContainerGenerator.ContainerFromItem(item);
+                    DataGridRow row = (DataGridRow)AssociatedObject.ItemContainerGenerator.ContainerFromItem(item);
                     if (item.Count == maxTagCount)
                     {
                         row.Background = Brushes.LightGreen;

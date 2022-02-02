@@ -9,7 +9,7 @@ namespace HtmlTagCounter.Views
     public partial class MainWindow : Window
     {
         /// <summary>
-        /// Main window of Html Tag Counter
+        /// Main window of Html Tag Counter.
         /// </summary>
         public MainWindow()
         {

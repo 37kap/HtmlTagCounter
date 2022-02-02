@@ -12,10 +12,10 @@ namespace HtmlTagCounter.Models
         private int _count;
         private string _tag;
         private string _comment;
-        private bool _urlIsValid;
+        private bool _urlIsValid = true;
 
         /// <summary>
-        /// Url to html page
+        /// Url to html page.
         /// </summary>
         public string Url
         {
@@ -23,12 +23,11 @@ namespace HtmlTagCounter.Models
             set
             {
                 SetProperty(ref _url, value);
-                ValidateUrl();
             }
         }
 
         /// <summary>
-        /// Determines if the url is valid
+        /// Determines if the url is valid.
         /// </summary>
         public bool UrlIsValid
         {
@@ -37,7 +36,7 @@ namespace HtmlTagCounter.Models
         }
 
         /// <summary>
-        /// Tag to be used for analysis
+        /// Tag to be used for analysis.
         /// </summary>
         public string Tag
         {
@@ -46,7 +45,7 @@ namespace HtmlTagCounter.Models
         }
 
         /// <summary>
-        /// Count of tags found
+        /// Count of tags found.
         /// </summary>
         public int Count
         {
@@ -55,7 +54,7 @@ namespace HtmlTagCounter.Models
         }
 
         /// <summary>
-        /// Additional Information
+        /// Additional Information.
         /// </summary>
         public string Comment
         {
@@ -63,9 +62,23 @@ namespace HtmlTagCounter.Models
             set => SetProperty(ref _comment, value);
         }
 
-        private void ValidateUrl()
+        /// <summary>
+        /// Validate url format.
+        /// </summary>
+        public void ValidateUrl()
         {
             UrlIsValid = Uri.TryCreate(Url, UriKind.Absolute, out Uri uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+        }
+
+        /// <summary>
+        /// Clear counter info except Url
+        /// </summary>
+        public void ClearAnalysisInfo()
+        {
+            UrlIsValid = true;
+            Tag = null;
+            Count = 0;
+            Comment = null;
         }
     }
 }
